@@ -139,6 +139,7 @@ public final class DeserializerCache
         JsonDeserializer<Object> deser = _findCachedDeserializer(propertyType);
         if (deser == null) {
             // If not, need to request factory to construct (or recycle)
+            // 缓存中没有解析器进行创建，
             deser = _createAndCacheValueDeserializer(ctxt, factory, propertyType);
             if (deser == null) {
                 /* Should we let caller handle it? Let's have a helper method
@@ -368,13 +369,17 @@ public final class DeserializerCache
 
         // 12-Feb-20202, tatu: Need to ensure that not only all Enum implementations get
         //    there, but also `Enum` -- latter wrt [databind#2605], polymorphic usage
+        // 如果是枚举，创建枚举解析器
         if (type.isEnumType()) {
             return factory.createEnumDeserializer(ctxt, type, beanDesc);
         }
+        // 如果是集合类类型
         if (type.isContainerType()) {
+            //创建数组解析器
             if (type.isArrayType()) {
                 return factory.createArrayDeserializer(ctxt, (ArrayType) type, beanDesc);
             }
+            // 创建 Map 解析器
             if (type.isMapLikeType()) {
                 // 11-Mar-2017, tatu: As per [databind#1554], also need to block
                 //    handling as Map if overriden with "as POJO" option.

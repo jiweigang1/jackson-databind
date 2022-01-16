@@ -639,6 +639,7 @@ public abstract class DeserializationContext
     public final JsonDeserializer<Object> findRootValueDeserializer(JavaType type)
         throws JsonMappingException
     {
+        //根据 JavaType 查询解析器， 如果不存在会进行创建
         JsonDeserializer<Object> deser = _cache.findValueDeserializer(this,
                 _factory, type);
         if (deser == null) { // can this occur?
