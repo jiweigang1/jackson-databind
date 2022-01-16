@@ -729,7 +729,7 @@ public class TypeFactory // note: was final in 2.9, removed from 2.10
     /* Public general-purpose factory methods
     /**********************************************************
      */
-
+    //结构化 JavaType
     public JavaType constructType(Type type) {
         return _fromAny(null, type, EMPTY_BINDINGS);
     }
@@ -1368,18 +1368,22 @@ ClassUtil.nameOf(rawClass), pc, (pc == 1) ? "" : "s", bindings));
         JavaType resultType;
 
         // simple class?
+        //处理普通的类
         if (srcType instanceof Class<?>) {
             // Important: remove possible bindings since this is type-erased thingy
             resultType = _fromClass(context, (Class<?>) srcType, EMPTY_BINDINGS);
         }
         // But if not, need to start resolving.
+        //处理泛型的类
         else if (srcType instanceof ParameterizedType) {
             resultType = _fromParamType(context, (ParameterizedType) srcType, bindings);
         }
+        //已经是JavaType 无需处理
         else if (srcType instanceof JavaType) { // [databind#116]
             // no need to modify further if we already had JavaType
             return (JavaType) srcType;
         }
+        //处理泛型类型数组
         else if (srcType instanceof GenericArrayType) {
             resultType = _fromArrayType(context, (GenericArrayType) srcType, bindings);
         }
